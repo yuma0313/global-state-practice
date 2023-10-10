@@ -1,47 +1,26 @@
 import React from "react";
 import type { AppProps } from "next/app";
-import { Provider } from "react-redux";
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { createContext, useState } from "react";
 
-//typeの定義
-export type CounterState = {
-  value: number;
-};
-//初期値の定義
-const initialState: CounterState = {
-  value: 0,
+type CountContextType = {
+  count: number;
+  setCount: (value: number) => void;
 };
 
-//sliceの定義
-export const counterSlice = createSlice({
-  name: "counter",
-  initialState,
-  reducers: {
-    increment: (state) => {
-      state.value += 1;
-    },
-    decrement: (state) => {
-      state.value -= 1;
-    },
-    incrementByAmount: (state, action) => {
-      state.value += action.payload;
-    },
-  },
-});
-
-//storeの定義
-export const store = configureStore({
-  reducer: {
-    counter: counterSlice.reducer,
-  },
+//グローバルなstateをcreateContextで作成
+export const CountContext = createContext<CountContextType>({
+  count: 0,
+  setCount: () => {},
 });
 
 //providerで囲む
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  const [count, setCount] = useState(0);
+
   return (
-    <Provider store={store}>
+    <CountContext.Provider value={{ count, setCount }}>
       <Component {...pageProps} />
-    </Provider>
+    </CountContext.Provider>
   );
 };
 
